@@ -1,6 +1,7 @@
 package com.webfarm.Scorinator
 
 import com.typesafe.config.ConfigFactory
+<<<<<<< HEAD
 import org.slf4j.LoggerFactory
 import java.io.File
 
@@ -33,10 +34,16 @@ class NameScorer(nameInput: Either[File, List[String]], scoreFn: (String, Int) =
   }
 
   val score4Names = _scoreList(names2score,1,BigInt(0))
+=======
+import com.typesafe.scalalogging.Logger
+
+class NameScorer() {
+>>>>>>> stubs for initial thoughts and documentation of expectations
 
 }
 
 object NameScorer {
+<<<<<<< HEAD
   val logger = LoggerFactory.getLogger(classOf[NameScorer])
 
   /**
@@ -54,4 +61,11 @@ object NameScorer {
     val csv = CSVReader.open(f)
     csv.all().flatten
   }
+=======
+  val logger = Logger(classOf[NameScorer])
+
+  lazy val singleNameConfig = ConfigFactory.load("scorinator.single-name")
+  lazy val fmlConfig = ConfigFactory.load("scorinator.last-first-middle")
+  lazy val lfmConfig = ConfigFactory.load("first-middle-last")
+>>>>>>> stubs for initial thoughts and documentation of expectations
 }

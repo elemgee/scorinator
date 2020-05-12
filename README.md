@@ -30,4 +30,8 @@ Your code should be written as if it were part of a real company codebase. As su
 
 ### Version History
 
+<<<<<<< HEAD
 
+=======
+**2020-05-13**: MVP simple scorer
+>>>>>>> stubs for initial thoughts and documentation of expectations
