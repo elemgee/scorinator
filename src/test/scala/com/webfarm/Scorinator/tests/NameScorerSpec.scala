@@ -3,6 +3,7 @@ package com.webfarm.Scorinator.tests
 import org.scalatest.flatspec.AnyFlatSpec
 import com.webfarm.Scorinator._
 import org.slf4j.LoggerFactory
+import java.io.File
 
 class NameScorerSpec extends AnyFlatSpec {
 
@@ -18,10 +19,21 @@ class NameScorerSpec extends AnyFlatSpec {
     assert(linda.equals(sorted(lindaOrder - 1)))
   }
 
-  s"""the total score for the test list""" should s"""be ${namesScore}""" in {
+  s"""the total score for the test list""" should f"""be $namesScore%,d""" in {
     val sorted = names.sorted
     val nameScores =  1 to sorted.length map  ( idx => NameScorer.simpleScore(sorted(idx - 1 ), idx))
     assert(nameScores.sum == namesScore)
+  }
+
+  s"""creating a NameScorer with a list of strings""" should f"succeed and have a score4Names of $namesScore%,d" in {
+    val scorer = new NameScorer(Right(names), NameScorer.simpleScore)
+    assert(scorer.score4Names == namesScore)
+  }
+
+  "creating a NameScorer with a File" should f"succeed and have a score4Names of $namesFileScore%,d" in {
+    val testfile = getClass().getResource("/names.txt")
+    val scorer = new NameScorer(Left(new File(testfile.toURI)), NameScorer.simpleScore)
+    assert(scorer.score4Names == namesFileScore)
   }
 
 }
