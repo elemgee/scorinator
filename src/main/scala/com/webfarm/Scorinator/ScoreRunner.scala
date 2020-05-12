@@ -1,11 +1,11 @@
 package com.webfarm.Scorinator
 
-import com.typesafe.scalalogging.Logger
+import org.slf4j.LoggerFactory
 
 import java.io.File
 
 object ScoreRunner {
-  val logger = Logger("ScoreRunner")
+  val logger = LoggerFactory.getLogger("ScoreRunner")
 
   def main(args: Array[String]): Unit = {
     logger debug "initializing ScoreRunner"
@@ -16,7 +16,7 @@ object ScoreRunner {
 
 
     } catch {
-      catch bounds: ArrayIndexOutOfBoundsException => {
+      case bounds: ArrayIndexOutOfBoundsException => {
         logger error "You must pass the filename (with complete path) as an argument to ScoreRunner"
         logger error bounds.getCause.toString
       }
@@ -30,3 +30,4 @@ object ScoreRunner {
   }
 
 }
+
