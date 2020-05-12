@@ -12,7 +12,7 @@ object ScoreRunner {
     try {
       val fname = args(0)
       val file2score = new File(fname)
-      logger debug file2score.exists().toString
+      val scorer = new NameScorer(Left(file2score), NameScorer.simpleScore)
 
 
     } catch {
