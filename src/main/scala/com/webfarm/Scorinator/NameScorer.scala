@@ -2,9 +2,11 @@ package com.webfarm.Scorinator
 
 import com.typesafe.config.ConfigFactory
 import org.slf4j.LoggerFactory
-
 import java.io.File
+
 import com.github.tototoshi.csv._
+
+import scala.annotation.tailrec
 
 class NameScorer(nameInput: Either[File, List[String]], scoreFn: (String, Int) => Int) {
 
@@ -25,7 +27,8 @@ class NameScorer(nameInput: Either[File, List[String]], scoreFn: (String, Int) =
     namelist.sorted
   }
 
-  def _scoreList( names: List[String], index: Int, accumulatedScore: Int): Int = names match {
+  @tailrec
+  private final def _scoreList( names: List[String], index: Int, accumulatedScore: Int): Int = names match {
     case Nil => accumulatedScore
     case n::ns => _scoreList(ns, index + 1, accumulatedScore + scoreFn(n,index))
   }
