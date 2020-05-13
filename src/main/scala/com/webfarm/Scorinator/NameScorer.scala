@@ -16,8 +16,7 @@ class NameScorer(nameInput: Either[File, List[String]], scoreFn: (String, Int) =
     val namelist = nameInput match {
       case Left(f) => {
         logger debug s"""got a file named ${f.getName} to score"""
-        val csv = CSVReader.open(f)
-        csv.all().flatten
+        nameListFromFile(f)
       }
       case Right(l) => {
         logger debug s"""got a list of names ${l.size} elements long to score"""
@@ -28,22 +27,17 @@ class NameScorer(nameInput: Either[File, List[String]], scoreFn: (String, Int) =
   }
 
   @tailrec
-  private final def _scoreList( names: List[String], index: Int, accumulatedScore: Int): Int = names match {
+  private final def _scoreList( names: List[String], index: Int, accumulatedScore: BigInt): BigInt = names match {
     case Nil => accumulatedScore
     case n::ns => _scoreList(ns, index + 1, accumulatedScore + scoreFn(n,index))
   }
 
-  val score4Names = _scoreList(names2score,1,0)
+  val score4Names = _scoreList(names2score,1,BigInt(0))
 
 }
 
 object NameScorer {
   val logger = LoggerFactory.getLogger(classOf[NameScorer])
-
-  lazy val singleNameConfig = ConfigFactory.load("scorinator.single-name")
-  lazy val fmlConfig = ConfigFactory.load("scorinator.last-first-middle")
-  lazy val lfmConfig = ConfigFactory.load("first-middle-last")
-
 
   /**
    * simpleScore assumes that we're score an upper case version of the name
@@ -54,5 +48,10 @@ object NameScorer {
   val simpleScore: (String, Int) => Int = (name: String, sortPosition: Int) => {
     val chars = name.toUpperCase.toList.map(c => (c.toInt - ('A'.toInt - 1)))
     chars.sum * sortPosition
+  }
+
+  def nameListFromFile(f: File): List[String] = {
+    val csv = CSVReader.open(f)
+    csv.all().flatten
   }
 }

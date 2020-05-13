@@ -9,7 +9,7 @@
         </layout>
     </appender>
 
-    <logger name="com.webfarm.Scorinator" level="debug" additivity="false">
+    <logger name="com.webfarm.Scorinator" level="info" additivity="false">
         <appender-ref ref="CONSOLE"/>
     </logger>
 
