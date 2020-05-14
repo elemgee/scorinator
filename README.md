@@ -4,6 +4,26 @@ This is a command line utility for computing a score for a list of names.
 
 ## Assumptions
 
+- The list of files provided includes only first names with no spaces. I stubbed out some configuration paramters
+that would allow the input strings to be treated in various ways if the desire was to make this a more generic service.
+For instance, if the list might contain spaces, or full names we would need to decide how to handle non-alpha characters
+like spaces, commas, hyphens, and other elements. For this exercise, I am assuming that the scoring is 
+{A=1, B=2 ... Y=25, Z=26} so
+we're scoring this in a case-insensitive manner. To avoid polluting the score with unexpected or unmapped characters, 
+I've normalized the input string to uppercase and removed all non alpha characters. That certainly can be adjusted, but
+that should allow this process to gracefully (and predictably) handle data other than the very clean test data.
+- One of the additional requirements is to allow scoring first and last names also. I'm assuming that since the mapping
+only included uppercase alpha, that will still hold. We could do any arbitrary score mapping, but for now, I'm assuming
+that we'll only score alpha characters. I'm also assuming that name ordering doesn't matter (first last; last, first, ...).
+For the current scoring algorithm, it wouldn't make any difference and the normalization of names could be made to handle
+that if order became important.
+- I've included tests even though this is a tiny exercise. I struggle like many to improve test coverage but in the 
+interest of putting my best foot forward... here you go. I pulled apart the `ScoreRunner` to test for expected exceptions,
+but that is just an academic exercise. The focus for the runner was just to give reasonable output for the exercise
+and blow up gracefully if someone didn't pass in the right arguments.  
+- The  `NameScorer` should be able to be called from a web service passing a `List[String]`. It could also be called
+from a wrapper than manages the rules for normalization and scoring based on the type of string.
+
 
 ## Original Instructions
 

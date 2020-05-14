@@ -8,8 +8,9 @@
             </Pattern>
         </layout>
     </appender>
+
     <logger name="ch.qos.logback" level="warn" />
-    <logger name="com.webfarm.Scorinator" level="info" additivity="false">
+    <logger name="com.webfarm.Scorinator" level="warn" additivity="false">
         <appender-ref ref="CONSOLE"/>
     </logger>
 
