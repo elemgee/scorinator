@@ -1,7 +1,6 @@
 package com.webfarm.Scorinator
 
-import com.typesafe.config.ConfigFactory
-<<<<<<< HEAD
+
 import org.slf4j.LoggerFactory
 import java.io.File
 
@@ -9,7 +8,12 @@ import com.github.tototoshi.csv._
 
 import scala.annotation.tailrec
 
-class NameScorer(nameInput: Either[File, List[String]], scoreFn: (String, Int) => Int) {
+/**
+ *
+ * @param nameInput takes Either a java.io.File or a List[String] for input
+ * @param scoreFn   (String, Int) => Int to transform a String with a specific index to a numeric score
+ */
+class NameScorer(nameInput: Either[File, List[String]], normalizer: String => String, scoreFn: (String, Int) => Int) {
 
   import NameScorer._
 
@@ -28,44 +32,48 @@ class NameScorer(nameInput: Either[File, List[String]], scoreFn: (String, Int) =
   }
 
   @tailrec
-  private final def _scoreList( names: List[String], index: Int, accumulatedScore: BigInt): BigInt = names match {
-    case Nil => accumulatedScore
-    case n::ns => _scoreList(ns, index + 1, accumulatedScore + scoreFn(n,index))
+  private final def _scoreList(names: List[String], index: Int, accumulatedScore: BigInt, accumulatedNames: List[ScoredName]): (BigInt, List[ScoredName]) = names match {
+    case Nil => (accumulatedScore, accumulatedNames)
+    case n :: ns => {
+      val nscore = scoreFn(normalizer(n), index)
+      _scoreList(ns, index + 1, accumulatedScore + nscore,  ScoredName(n, Map("index" -> index), nscore) :: accumulatedNames )
+    }
   }
 
-  val score4Names = _scoreList(names2score,1,BigInt(0))
-=======
-import com.typesafe.scalalogging.Logger
-
-class NameScorer() {
->>>>>>> stubs for initial thoughts and documentation of expectations
+  lazy val (score4Names, scoredNames) = _scoreList(names2score, 1, BigInt(0), List[ScoredName]())
 
 }
 
 object NameScorer {
-<<<<<<< HEAD
   val logger = LoggerFactory.getLogger(classOf[NameScorer])
+
+  val simpleNormalizer: String => String = (name: String) => {
+    name.replaceAll("[^A-Za-z]", "").toUpperCase()
+  }
 
   /**
    * simpleScore assumes that we're score an upper case version of the name
    * Since we're dealing with character values begining with 1, I'm  subtracting
    * the one less than the int value of 'A' (so I don't have to remember what it is)
    * so we can get to a value for the character of 'A' of 1
+   *
+   * If some other mapping is desired, this could be modified to accept an arbitrary
+   * mapping like Map[Char,Int]
    */
   val simpleScore: (String, Int) => Int = (name: String, sortPosition: Int) => {
-    val chars = name.toUpperCase.toList.map(c => (c.toInt - ('A'.toInt - 1)))
+    val chars = name.toList.map(c => (c.toInt - ('A'.toInt - 1)))
     chars.sum * sortPosition
   }
 
+
+  /**
+   * could easily be done inline, but was pulled out for testability
+   *
+   * @param f : File (assumed to be a comma separated list of strings
+   * @return a List[String] from the contents of the file
+   */
   def nameListFromFile(f: File): List[String] = {
     val csv = CSVReader.open(f)
     csv.all().flatten
   }
-=======
-  val logger = Logger(classOf[NameScorer])
-
-  lazy val singleNameConfig = ConfigFactory.load("scorinator.single-name")
-  lazy val fmlConfig = ConfigFactory.load("scorinator.last-first-middle")
-  lazy val lfmConfig = ConfigFactory.load("first-middle-last")
->>>>>>> stubs for initial thoughts and documentation of expectations
 }

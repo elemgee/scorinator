@@ -23,7 +23,12 @@ but that is just an academic exercise. The focus for the runner was just to give
 and blow up gracefully if someone didn't pass in the right arguments.  
 - The  `NameScorer` should be able to be called from a web service passing a `List[String]`. It could also be called
 from a wrapper than manages the rules for normalization and scoring based on the type of string.
-
+- The `ExtendedScorer` object is just an example of one way that alternate maps for scoring individual characters can
+be used and alternate scoring functions can be composed. This is a kind of forced example of how scala can be compose
+functions to be used in various contexts like the extensions at the end of the instructions.
+- The `ScoredName` is a structure for working with different scoring systems that may not require the index but might
+need some other parameter that is from a scope outside the string itself. Using a `Map` here is an attempt to accommodate
+a generic set of parameters that may be required for other score schemes.
 
 
 ## Original Instructions
@@ -51,5 +56,4 @@ Your code should be written as if it were part of a real company codebase. As su
 
 ### Version History
 
-**2020-05-13**: basic version focused on initial requirements and stability/scalability
 

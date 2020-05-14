@@ -1,26 +1,20 @@
 package com.webfarm.Scorinator
 
-<<<<<<< HEAD
 import org.slf4j.LoggerFactory
 import java.io.{File, FileNotFoundException}
 
 object ScoreRunner {
   val logger = LoggerFactory.getLogger("ScoreRunner")
-=======
-import com.typesafe.scalalogging.Logger
 
-import java.io.File
-
-object ScoreRunner {
-  val logger = Logger("ScoreRunner")
->>>>>>> stubs for initial thoughts and documentation of expectations
+  def fileFromCommandLine(args: Array[String]): File = {
+    new File(args(0))
+  }
 
   def main(args: Array[String]): Unit = {
     logger debug "initializing ScoreRunner"
     try {
-<<<<<<< HEAD
-      val f = new File(args(0))
-      val scorer = new NameScorer(Left(f), NameScorer.simpleScore)
+      val f = fileFromCommandLine(args)
+      val scorer = new NameScorer(Left(f), NameScorer.simpleNormalizer, NameScorer.simpleScore)
       val filescore = scorer.score4Names
       println(f"""\nThe total score for names in ${f.getName} is ${filescore}%,d""")
       println(
@@ -42,28 +36,15 @@ object ScoreRunner {
         println("The file you passed on the command line could not be found")
         println(fnf.getMessage)
         println(usage)
-=======
-      val fname = args(0)
-      val file2score = new File(fname)
-      logger debug file2score.exists().toString
-
-
-    } catch {
-      catch bounds: ArrayIndexOutOfBoundsException => {
-        logger error "You must pass the filename (with complete path) as an argument to ScoreRunner"
-        logger error bounds.getCause.toString
->>>>>>> stubs for initial thoughts and documentation of expectations
       }
       case t: Throwable => {
         t.printStackTrace()
-
       }
     }
 
     logger debug "finished ScoreRunner"
   }
 
-<<<<<<< HEAD
 
   lazy val usage =
     s"""
@@ -80,6 +61,3 @@ object ScoreRunner {
 
 }
 
-=======
-}
->>>>>>> stubs for initial thoughts and documentation of expectations
