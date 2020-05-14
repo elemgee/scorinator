@@ -30,7 +30,6 @@ class NameScorerSuite extends AnyFunSuite {
 
   test("""mixed case names should be normalized to all uppercase, no spaces """) {
     info(s"$n1 should be normalized to $target")
-    info(NameScorer.simpleNormalizer(n1))
     assert(target.contentEquals(NameScorer.simpleNormalizer(n1)))
     info(s"The score should be the same for $n1 and $n2 given the same sort index")
     val s1 = NameScorer.simpleScore(NameScorer.simpleNormalizer(n1), 1)
@@ -46,21 +45,30 @@ class NameScorerSuite extends AnyFunSuite {
     assert(s1 == s2)
   }
 
-  test(f"creating a NameScorer should succeed and have a score4Names of $namesFileScore%,d") {
-
-    info("check NameScorer using a java.io.File as input")
+  test(f"creating a NameScorer should succeed") {
+    info(f"check NameScorer using small test list as input should have a score4Names of $namesScore%,d")
+    val testScorer = new NameScorer(Right(names), NameScorer.simpleNormalizer, NameScorer.simpleScore)
+    assert(testScorer.score4Names == namesScore)
+    info(s"did we score all the names for the small test list? (${testScorer.scoredNames.head})")
+    assert(testScorer.scoredNames.size == names.size)
+    info(f"check NameScorer using a java.io.File as input should have a score4Names of $namesFileScore%,d")
     val fileScorer = new NameScorer(Left(new File(testfile.toURI)), NameScorer.simpleNormalizer, NameScorer.simpleScore)
     assert(fileScorer.score4Names == namesFileScore)
-    info("check NameScorer using a List[String] as input")
+    info(s"did we score all the names for the java.io.File? (${fileScorer.scoredNames.head})")
+    assert(fileScorer.scoredNames.size == fileScorer.names2score.size)
+    info(f"check NameScorer using a List[String] as input should have a score4Names of $namesFileScore%,d")
     val nameListFromFile = NameScorer.nameListFromFile(new File(testfile.toURI))
     val listScorer = new NameScorer(Right(nameListFromFile), NameScorer.simpleNormalizer, NameScorer.simpleScore)
     assert(listScorer.score4Names == namesFileScore)
+    info(s"did we score all the names for the List[String]? (${listScorer.scoredNames.head})")
+    assert(listScorer.scoredNames.size == nameListFromFile.size)
+
   }
 
 
 }
 
-@Ignore
+@Ignore // if you don't want to wait for the stress tests
 class NameScorerStressSuite extends AnyFunSuite {
 
   import NameScorerSuite._

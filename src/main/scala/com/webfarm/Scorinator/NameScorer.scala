@@ -1,6 +1,6 @@
 package com.webfarm.Scorinator
 
-import com.typesafe.config.ConfigFactory
+
 import org.slf4j.LoggerFactory
 import java.io.File
 
@@ -32,12 +32,15 @@ class NameScorer(nameInput: Either[File, List[String]], normalizer: String => St
   }
 
   @tailrec
-  private final def _scoreList(names: List[String], index: Int, accumulatedScore: BigInt): BigInt = names match {
-    case Nil => accumulatedScore
-    case n :: ns => _scoreList(ns, index + 1, accumulatedScore + scoreFn(normalizer(n), index))
+  private final def _scoreList(names: List[String], index: Int, accumulatedScore: BigInt, accumulatedNames: List[ScoredName]): (BigInt, List[ScoredName]) = names match {
+    case Nil => (accumulatedScore, accumulatedNames)
+    case n :: ns => {
+      val nscore = scoreFn(normalizer(n), index)
+      _scoreList(ns, index + 1, accumulatedScore + nscore,  ScoredName(n, Map("index" -> index), nscore) :: accumulatedNames )
+    }
   }
 
-  lazy val score4Names = _scoreList(names2score, 1, BigInt(0))
+  lazy val (score4Names, scoredNames) = _scoreList(names2score, 1, BigInt(0), List[ScoredName]())
 
 }
 
@@ -45,7 +48,7 @@ object NameScorer {
   val logger = LoggerFactory.getLogger(classOf[NameScorer])
 
   val simpleNormalizer: String => String = (name: String) => {
-    name.replaceAll("[^A-Za-z]","").toUpperCase()
+    name.replaceAll("[^A-Za-z]", "").toUpperCase()
   }
 
   /**
