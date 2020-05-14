@@ -25,6 +25,7 @@ and blow up gracefully if someone didn't pass in the right arguments.
 from a wrapper than manages the rules for normalization and scoring based on the type of string.
 
 
+
 ## Original Instructions
 
 Create a command line utility that will compute a score for a list of first names.
@@ -50,8 +51,5 @@ Your code should be written as if it were part of a real company codebase. As su
 
 ### Version History
 
-<<<<<<< HEAD
+**2020-05-13**: basic version focused on initial requirements and stability/scalability
 
-=======
-**2020-05-13**: MVP simple scorer
->>>>>>> stubs for initial thoughts and documentation of expectations
