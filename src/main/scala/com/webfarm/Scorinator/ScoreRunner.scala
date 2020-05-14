@@ -6,11 +6,15 @@ import java.io.{File, FileNotFoundException}
 object ScoreRunner {
   val logger = LoggerFactory.getLogger("ScoreRunner")
 
+  def fileFromCommandLine(args: Array[String]): File = {
+    new File(args(0))
+  }
+
   def main(args: Array[String]): Unit = {
     logger debug "initializing ScoreRunner"
     try {
-      val f = new File(args(0))
-      val scorer = new NameScorer(Left(f), NameScorer.simpleScore)
+      val f = fileFromCommandLine(args)
+      val scorer = new NameScorer(Left(f), NameScorer.simpleNormalizer, NameScorer.simpleScore)
       val filescore = scorer.score4Names
       println(f"""\nThe total score for names in ${f.getName} is ${filescore}%,d""")
       println(
@@ -35,7 +39,6 @@ object ScoreRunner {
       }
       case t: Throwable => {
         t.printStackTrace()
-
       }
     }
 
