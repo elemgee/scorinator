@@ -1,4 +1,4 @@
-# Scorinator
+# Scorinator ![Scala CI](https://github.com/elemgee/scorinator/workflows/Scala%20CI/badge.svg)
 
 This is a command line utility for computing a score for a list of names.
 

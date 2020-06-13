@@ -68,7 +68,7 @@ class NameScorerSuite extends AnyFunSuite {
 
 }
 
-@Ignore // if you don't want to wait for the stress tests
+
 class NameScorerStressSuite extends AnyFunSuite {
 
   import NameScorerSuite._
