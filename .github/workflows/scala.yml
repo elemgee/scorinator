@@ -20,4 +20,4 @@ jobs:
     - name: Run tests
       run: sbt coverage test
     - name: Run coverage report
-      run: run sbt coverageReport
+      run: sbt coverageReport
