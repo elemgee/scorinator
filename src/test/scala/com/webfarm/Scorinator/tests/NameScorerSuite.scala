@@ -14,7 +14,8 @@ class NameScorerSuite extends AnyFunSuite {
   import NameScorerSuite._
 
   test(s""""${linda}" in sort position ${lindaOrder} should receive a score of ${lindaScore}""") {
-    assert(NameScorer.simpleScore(linda, lindaOrder) == lindaScore)
+    val (lscore, t1) = time{NameScorer.simpleScore(linda, lindaOrder)}
+    assert( lscore == lindaScore)
   }
 
   test(s""""${linda}" should be at sort position ${lindaOrder} (array index ${lindaOrder - 1}) in the test array""") {
@@ -24,19 +25,28 @@ class NameScorerSuite extends AnyFunSuite {
 
   test(f"""the total score for the test list be $namesScore%,d""") {
     val sorted = names.sorted
-    val nameScores = 1 to sorted.length map (idx => NameScorer.simpleScore(sorted(idx - 1), idx))
-    assert(nameScores.sum == namesScore)
+    val (nameScores,t1) = time{(1 to sorted.length map (idx => NameScorer.simpleScore(sorted(idx - 1), idx))).sum}
+    info(f"""mapping for NameScorer.simpleScore  took $t1%,d""")
+    assert(nameScores == namesScore)
   }
 
   test(f"""the total score for the small test list (using the reduceLeft version) should be $namesScore%,d""") {
     val sorted = names.sorted
-    val reducedScore = NameScorer.scoreListByReducer(sorted)
+    val (reducedScore,t2) = time{NameScorer.scoreListByReducer(sorted)}
+    info(f"""reduceLeft for sorted small names test took $t2%,d""")
     assert(reducedScore == namesScore)
+  }
+
+  test(f"""the total score for the test list from the file  using the NameScorer class instance  should be $namesFileScore%,d""") {
+    val (reducedScore,t3) = time{new NameScorer(Right(NameScorer.nameListFromFile(new File(testfile.toURI)).sorted), NameScorer.simpleNormalizer, NameScorer.simpleScore).score4Names}
+    info(f"""NameScorer class usage for sorted test list  test took $t3%,d""")
+    assert(reducedScore == namesFileScore)
   }
 
   test(f"""the total score for the  test list from the file(using the reduceLeft version) should be $namesFileScore%,d""") {
     val sorted = NameScorer.nameListFromFile(new File(testfile.toURI)).sorted
-    val reducedScore = NameScorer.scoreListByReducer(sorted)
+    val (reducedScore,t3) = time{NameScorer.scoreListByReducer(sorted)}
+    info(f"""reduceLeft for sorted test list  test took $t3%,d""")
     assert(reducedScore == namesFileScore)
   }
 
@@ -87,17 +97,26 @@ class NameScorerStressSuite extends AnyFunSuite {
   val nameListFromFile = NameScorer.nameListFromFile(new File(testfile.toURI))
 
   stressme foreach { stressIterations =>
-    test(s"using the test file to create a very large list, see if we can handle ${stressIterations} times the data") {
-      val bigList = List.fill(stressIterations)(nameListFromFile).flatten
-      info(f"""The size of the big list should be ${nameListFromFile.size}%,d x $stressIterations (${nameListFromFile.size * stressIterations}%,d) """)
-      assert(bigList.size == nameListFromFile.size * stressIterations)
-      val scorer = new NameScorer(Right(bigList), NameScorer.simpleNormalizer, NameScorer.simpleScore)
-      val bigscore = scorer.score4Names
-      info(f"""The overall score for the big list should calculate cleanly and should be greater than ${namesFileScore}%,d ($bigscore%,d)""")
-      assert(namesFileScore < bigscore)
-    }
-  }
+    val bigList = List.fill(stressIterations)(nameListFromFile.sorted).flatten
+    val scorer = new NameScorer(Right(bigList), NameScorer.simpleNormalizer, NameScorer.simpleScore)
+    val bigscore = scorer.score4Names
+    info(s"using the test file to create a very large list, see if we can handle ${stressIterations} times the data")
+      test(f"""The size of the big list should be ${nameListFromFile.size}%,d x $stressIterations (${nameListFromFile.size * stressIterations}%,d) """) {
+       if ( stressIterations > 1) {
+         assert(bigList.size == nameListFromFile.size * stressIterations)
+       }  else {
+         assert(bigList.size == nameListFromFile.size * stressIterations)
+       }
+      }
+      test(f"""The overall score for the big list should calculate cleanly and should be at least ${namesFileScore}%,d ($bigscore%,d)""") {
+        if ( stressIterations > 1) {
+          assert(namesFileScore < bigscore)
+        } else {
+          assert(namesFileScore == bigscore)
+        }
+      }
 
+  }
 }
 
 object NameScorerSuite {
@@ -117,6 +136,14 @@ object NameScorerSuite {
   val dirty1 = "Lar  ry Mi@lls-G#ahl)([]"
 
   val namesFileScore = BigInt(871198282)
-  val stressme = 100 to 1000 by 100
+  val stressme = 10 to 20 by 4
+
+  def time[R](block: => R): (R,Long) = {
+    val t0 = System.nanoTime()
+    val result = block    // call-by-name
+    val t1 = System.nanoTime()
+    println("Elapsed time: " + (t1 - t0) + "ns")
+    (result, (System.nanoTime() - t0))
+  }
 
 }

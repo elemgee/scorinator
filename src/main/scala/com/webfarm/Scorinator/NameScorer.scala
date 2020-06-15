@@ -95,8 +95,9 @@ object NameScorer {
   /** alternate to the per-name scorer {@link NameScorer.simpleScore} using reduceLeft
    * to score the entire list in one call
    */
-  val scoreListByReducer: (List[String]) => Int = (list2score: List[String]) => {
-    (list2score.map(n => n.toList.map(c => (c.toInt - ('A'.toInt - 1))).sum * (list2score.indexOf(n) + 1))).reduceLeft(_ + _)
+  val scoreListByReducer: (List[String]) => BigInt = (list2score: List[String]) => {
+    val a = list2score.map(n => BigInt(n.toList.map(c => (c.toInt - ('A'.toInt - 1))).sum * (list2score.indexOf(n) + 1)))
+      a.reduceLeft(_ + _ )
   }
 
 
