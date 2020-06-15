@@ -55,9 +55,20 @@ Your code should be written as if it were part of a real company codebase. As su
 ```
 
 ### Version History
+***2020-06-15***: add reduceLeft version of score implementation. It looks like that doesn't perform as well as the tailrec version
+and it's also more difficult to troubleshoot. 
 
-2020-06-13: add actions for automatic test runs and reporting via GitHub actions
+From the test run: 
 
-2020-05-13: release for submission
+    [info] - the total score for the test list from the file  using the NameScorer class instance  should be 871,198,282
+    [info]   + NameScorer class usage for sorted test list  test took 51,406,784 ns
+    [info] - the total score for the  test list from the file(using the reduceLeft version) should be 871,198,282
+    [info]   + reduceLeft for sorted test list  test took 482,233,209 ns
+
+
+
+***2020-06-13***: add actions for automatic test runs and reporting via GitHub actions
+
+***2020-05-13***: release for submission
 
 
