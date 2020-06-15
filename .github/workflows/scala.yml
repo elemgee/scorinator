@@ -21,3 +21,5 @@ jobs:
       run: sbt coverage test
     - name: Run coverage report
       run: sbt coverageReport
+    - name: Run documentation and package jar
+      run: sbt doc package
