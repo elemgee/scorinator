@@ -1,6 +1,6 @@
 name := "Scorinator"
 
-version := "1.0"
+version := "1.1"
 
 scalaVersion := "2.13.2"
 
@@ -8,7 +8,7 @@ mainClass in assembly := Some("com.webfarm.Scorinator.ScoreRunner")
 
 assemblyJarName in assembly := "Scorinator.jar"
 
-assemblyOutputPath in assembly := file("/Users/lmg42/Dropbox/GOOD/OCC/scorinator.jar")
+assemblyOutputPath in assembly := baseDirectory.value / "scorinator.jar"
 
 libraryDependencies ++= Seq(
   "com.typesafe" % "config" % "1.3.3",
@@ -19,6 +19,8 @@ libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "3.1.1"
 )
 
-scalacOptions += "-deprecation"
+target in Compile in doc := baseDirectory.value / "api"
+
+scalacOptions ++= Seq("-deprecation")
 
 

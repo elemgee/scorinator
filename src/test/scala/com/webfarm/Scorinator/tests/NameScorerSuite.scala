@@ -28,6 +28,18 @@ class NameScorerSuite extends AnyFunSuite {
     assert(nameScores.sum == namesScore)
   }
 
+  test(f"""the total score for the small test list (using the reduceLeft version) should be $namesScore%,d""") {
+    val sorted = names.sorted
+    val reducedScore = NameScorer.scoreListByReducer(sorted)
+    assert(reducedScore == namesScore)
+  }
+
+  test(f"""the total score for the  test list from the file(using the reduceLeft version) should be $namesFileScore%,d""") {
+    val sorted = NameScorer.nameListFromFile(new File(testfile.toURI)).sorted
+    val reducedScore = NameScorer.scoreListByReducer(sorted)
+    assert(reducedScore == namesFileScore)
+  }
+
   test("""mixed case names should be normalized to all uppercase, no spaces """) {
     info(s"$n1 should be normalized to $target")
     assert(target.contentEquals(NameScorer.simpleNormalizer(n1)))
@@ -62,7 +74,6 @@ class NameScorerSuite extends AnyFunSuite {
     assert(listScorer.score4Names == namesFileScore)
     info(s"did we score all the names for the List[String]? (${listScorer.scoredNames.head})")
     assert(listScorer.scoredNames.size == nameListFromFile.size)
-
   }
 
 
